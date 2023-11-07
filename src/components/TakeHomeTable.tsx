@@ -27,24 +27,40 @@ type TakeHomeTableProps = {
 };
 
 const setNextSort = (
+  fieldName: string,
   state: TakeHomeDataState,
   setSort: (field: string | undefined, isAscending: boolean) => void,
-  fieldName: string,
 ) => {
-  let sortProse;
   if (state.sortField === fieldName) {
     // already sorting by this field
     if (state.sortAscending) {
       setSort(fieldName, false);
-      sortProse = `Sort by ${fieldName} descending`;
     } else {
       // clear sorting
       setSort(undefined, true);
+    }
+  } else {
+    // begin sorting by this field
+    setSort(fieldName, true);
+  }
+};
+
+const nextSortForField = (
+  fieldName: string,
+  label: string,
+  title: string | undefined,
+  state: TakeHomeDataState,
+) => {
+  const field = title || label || fieldName;
+  let sortProse;
+  if (state.sortField === fieldName) {
+    if (state.sortAscending) {
+      sortProse = `Sort by ${field} descending`;
+    } else {
       sortProse = `Clear sorting`;
     }
   } else {
-    setSort(fieldName, true);
-    sortProse = `Sort by ${fieldName} ascending`;
+    sortProse = `Sort by ${field} ascending`;
   }
   return sortProse;
 };
@@ -72,7 +88,8 @@ export const TakeHomeTable = ({
             <th key={fieldName} title={title}>
               {sortable ? (
                 <ColumnHeaderButton
-                  onClick={() => setNextSort(state, setSort, fieldName)}
+                  title={nextSortForField(fieldName, label, title, state)}
+                  onClick={() => setNextSort(fieldName, state, setSort)}
                 >
                   {label}{" "}
                   <SortIndicator>

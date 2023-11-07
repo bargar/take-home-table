@@ -1,9 +1,18 @@
+import React from "react";
+
+type RendererProps = {
+  children: React.ReactNode;
+  value: string | number;
+};
+export type TakeHomeRenderer = React.FunctionComponent<RendererProps>;
+
 export type TakeHomeTableColumn = {
   fieldName: string;
   label: string;
   title?: string;
   sortable?: boolean;
   filterable?: boolean;
+  Renderer?: TakeHomeRenderer;
 };
 
 type TakeHomeTableProps = {
@@ -25,8 +34,14 @@ export const TakeHomeTable = ({ columns, data = [] }: TakeHomeTableProps) => (
     <tbody>
       {data.map((row) => (
         <tr key={JSON.stringify(row)}>
-          {columns.map(({ fieldName }) => (
-            <td key={fieldName}>{row[fieldName]}</td>
+          {columns.map(({ fieldName, Renderer }) => (
+            <td key={fieldName}>
+              {Renderer ? (
+                <Renderer value={row[fieldName]}>{row[fieldName]}</Renderer>
+              ) : (
+                row[fieldName]
+              )}
+            </td>
           ))}
         </tr>
       ))}

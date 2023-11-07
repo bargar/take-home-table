@@ -1,6 +1,7 @@
 import "./App.css";
 import styled from "styled-components";
 import {
+  TakeHomeRenderer,
   TakeHomeTable,
   TakeHomeTableColumn,
 } from "./components/TakeHomeTable.tsx";
@@ -15,6 +16,9 @@ function App() {
     </>
   );
 }
+
+const formatPrice = (price: string | number) => `$${price}`;
+const PriceRenderer: TakeHomeRenderer = ({ value }) => formatPrice(value);
 
 const columns: TakeHomeTableColumn[] = [
   {
@@ -32,10 +36,12 @@ const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "price",
     label: "Price",
+    Renderer: PriceRenderer,
   },
   {
     fieldName: "discountPercentage",
     label: "Discount",
+    Renderer: PriceRenderer,
   },
   {
     fieldName: "rating",

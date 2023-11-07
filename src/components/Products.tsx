@@ -65,14 +65,21 @@ const columns: TakeHomeTableColumn[] = [
   // },
 ];
 const Products = () => {
-  const { load, state } = useContext(TakeHomeDataContext);
+  const { load, setPage, setPageSize, state } = useContext(TakeHomeDataContext);
 
   // initial load
   useEffect(() => {
     load();
   }, []);
 
-  return <TakeHomeTable columns={columns} state={state} />;
+  return (
+    <TakeHomeTable
+      columns={columns}
+      state={state}
+      setPage={setPage}
+      setPageSize={setPageSize}
+    />
+  );
 };
 
 export default Products;

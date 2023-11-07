@@ -1,35 +1,58 @@
 import React, { createContext, useCallback, useReducer } from "react";
 import { artificialDelay } from "../util.ts";
 
+export const PAGE_SIZES = [5, 10, 50, 100];
+const URL = "https://dummyjson.com/products";
+const composeUrl = (page: number = 1, pageSize: number = 10) =>
+  `${URL}?limit=${pageSize}&skip=${(page - 1) * pageSize}`;
+
 type TakeHomeDataContextValue = {
   load: () => void;
+  setPage: (page: number) => void;
+  setPageSize: (pageSize: number) => void;
   state: TakeHomeDataState;
 };
 
 const initialState: TakeHomeDataState = {
   isLoading: false,
   data: [],
+  total: 0,
   asOf: Date.now(),
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
 };
 
 export const TakeHomeDataContext = createContext<TakeHomeDataContextValue>({
   load: () => {},
+  setPage: () => {},
+  setPageSize: () => {},
   state: initialState,
 });
 
 export type TakeHomeDataState = {
   isLoading: boolean;
   data: any[];
+  total: number;
   asOf: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 };
 
-type ACTIONS = "SET_DATA" | "SET_LOADING";
 const SET_DATA = "SET_DATA";
 const SET_LOADING = "SET_LOADING";
+const SET_PAGE = "SET_PAGE";
+const SET_PAGE_SIZE = "SET_PAGE_SIZE";
+type Action =
+  | { type: "SET_DATA"; payload: { data: any[]; total: number } }
+  | { type: "SET_LOADING" }
+  | { type: "SET_PAGE"; payload: number }
+  | { type: "SET_PAGE_SIZE"; payload: number };
 
 const reducer = (
   state: TakeHomeDataState,
-  action: { payload?: any[]; type?: ACTIONS },
+  action: Action,
 ): TakeHomeDataState => {
   const { type } = action;
   let newState;
@@ -40,9 +63,25 @@ const reducer = (
     case SET_DATA:
       newState = {
         ...state,
-        data: action.payload || [],
+        data: action.payload.data,
+        total: action.payload.total,
+        totalPages: action.payload.total / state.pageSize,
         asOf: Date.now(),
         isLoading: false,
+      };
+      break;
+    case SET_PAGE:
+      newState = {
+        ...state,
+        page: action.payload,
+      };
+      break;
+    case SET_PAGE_SIZE:
+      newState = {
+        ...state,
+        page: 1,
+        pageSize: action.payload,
+        totalPages: state.total / action.payload,
       };
       break;
     default:
@@ -59,22 +98,41 @@ export const TakeHomeDataProvider = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const load = useCallback(() => {
-    (async () => {
-      dispatch({ type: SET_LOADING });
-      await artificialDelay();
-      const response = await fetch("https://dummyjson.com/products");
-      if (response.ok) {
-        const data = await response.json();
-        dispatch({ type: SET_DATA, payload: data.products });
-      } else {
-        console.error("Error loading data");
-      }
-    })();
-  }, [dispatch]);
+  const load = useCallback(
+    (page: number = 1, pageSize: number = 10) => {
+      (async () => {
+        dispatch({ type: SET_LOADING });
+        await artificialDelay();
+        const response = await fetch(composeUrl(page, pageSize));
+        if (response.ok) {
+          const { products: data, total } = await response.json();
+          dispatch({ type: SET_DATA, payload: { data, total } });
+        } else {
+          console.error("Error loading data");
+        }
+      })();
+    },
+    [dispatch],
+  );
+
+  const setPage = useCallback(
+    (page: number) => {
+      dispatch({ type: SET_PAGE, payload: page });
+      load(page, state.pageSize);
+    },
+    [dispatch, load, state.pageSize],
+  );
+
+  const setPageSize = useCallback(
+    (pageSize: number) => {
+      dispatch({ type: SET_PAGE_SIZE, payload: pageSize });
+      load(1, pageSize);
+    },
+    [dispatch, load],
+  );
 
   return (
-    <TakeHomeDataContext.Provider value={{ load, state }}>
+    <TakeHomeDataContext.Provider value={{ load, setPage, setPageSize, state }}>
       {children}
     </TakeHomeDataContext.Provider>
   );

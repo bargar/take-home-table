@@ -1,5 +1,10 @@
 import React from "react";
-import { TakeHomeDataState } from "../contexts/TakeHomeData.tsx";
+import {
+  SetPage,
+  SetPageSize,
+  SetSort,
+  TakeHomeDataState,
+} from "../contexts/TakeHomeData.tsx";
 import { PAGE_SIZES } from "../data/api.ts";
 import styled from "styled-components";
 
@@ -21,15 +26,15 @@ export type TakeHomeTableColumn = {
 type TakeHomeTableProps = {
   columns: TakeHomeTableColumn[];
   state: TakeHomeDataState;
-  setPageSize: (pageSize: number) => void;
-  setPage: (page: number) => void;
-  setSort: (field: string | undefined, isAscending: boolean) => void;
+  setPageSize: SetPageSize;
+  setPage: SetPage;
+  setSort: SetSort;
 };
 
 const setNextSort = (
   fieldName: string,
   state: TakeHomeDataState,
-  setSort: (field: string | undefined, isAscending: boolean) => void,
+  setSort: SetSort,
 ) => {
   if (state.sortField === fieldName) {
     // already sorting by this field

@@ -2,11 +2,21 @@ import React, { createContext, useCallback, useReducer } from "react";
 import { artificialDelay } from "../util.ts";
 import { mockFetch } from "../data/api.ts";
 
+export type Load = (
+  page?: number,
+  pageSize?: number,
+  sortField?: string | undefined,
+  sortAscending?: boolean,
+) => void;
+export type SetPage = (page: number) => void;
+export type SetPageSize = (pageSize: number) => void;
+export type SetSort = (field: string | undefined, isAscending: boolean) => void;
+
 type TakeHomeDataContextValue = {
-  load: () => void;
-  setPage: (page: number) => void;
-  setPageSize: (pageSize: number) => void;
-  setSort: (field: string | undefined, isAscending: boolean) => void;
+  load: Load;
+  setPage: SetPage;
+  setPageSize: SetPageSize;
+  setSort: SetSort;
   state: TakeHomeDataState;
 };
 
@@ -112,7 +122,7 @@ export const TakeHomeDataProvider = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const load = useCallback(
+  const load: Load = useCallback(
     (
       page: number = 1,
       pageSize: number = 10,
@@ -136,7 +146,7 @@ export const TakeHomeDataProvider = ({
     [dispatch],
   );
 
-  const setPage = useCallback(
+  const setPage: SetPage = useCallback(
     (page: number) => {
       dispatch({ type: SET_PAGE, payload: page });
       load(page, state.pageSize);
@@ -144,7 +154,7 @@ export const TakeHomeDataProvider = ({
     [dispatch, load, state.pageSize],
   );
 
-  const setPageSize = useCallback(
+  const setPageSize: SetPageSize = useCallback(
     (pageSize: number) => {
       dispatch({ type: SET_PAGE_SIZE, payload: pageSize });
       load(1, pageSize);
@@ -152,7 +162,7 @@ export const TakeHomeDataProvider = ({
     [dispatch, load],
   );
 
-  const setSort = useCallback(
+  const setSort: SetSort = useCallback(
     (field: string | undefined, isAscending: boolean) => {
       dispatch({ type: SET_SORT, payload: { field, isAscending } });
       load(state.page, state.pageSize, field, isAscending);

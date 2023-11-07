@@ -3,7 +3,8 @@ import {
   TakeHomeTable,
   TakeHomeTableColumn,
 } from "./TakeHomeTable.tsx";
-import products from "../data/products.ts";
+import { useContext, useEffect } from "react";
+import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
 
 const formatPrice = (price: string | number) => `$${price}`;
 const PriceRenderer: TakeHomeRenderer = ({ value }) => formatPrice(value);
@@ -64,7 +65,17 @@ const columns: TakeHomeTableColumn[] = [
   // },
 ];
 const Products = () => {
-  return <TakeHomeTable columns={columns} data={products.products} />;
+  const {
+    load,
+    state: { data },
+  } = useContext(TakeHomeDataContext);
+
+  // initial load
+  useEffect(() => {
+    load();
+  }, []);
+
+  return <TakeHomeTable columns={columns} data={data} />;
 };
 
 export default Products;

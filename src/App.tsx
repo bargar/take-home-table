@@ -1,13 +1,16 @@
 import "./App.css";
 import styled from "styled-components";
 import Products from "./components/Products.tsx";
+import { TakeHomeDataProvider } from "./contexts/TakeHomeData.tsx";
 
 function App() {
   return (
     <>
       <Logo>🧮</Logo>
       <h1>take-home-table</h1>
-      <Products />
+      <TakeHomeDataProvider>
+        <Products />
+      </TakeHomeDataProvider>
     </>
   );
 }

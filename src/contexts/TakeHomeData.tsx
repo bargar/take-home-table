@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useReducer } from "react";
+import { artificialDelay } from "../util.ts";
 
 type TakeHomeDataContextValue = {
   load: () => void;
@@ -16,14 +17,15 @@ export const TakeHomeDataContext = createContext<TakeHomeDataContextValue>({
   state: initialState,
 });
 
-type TakeHomeDataState = {
+export type TakeHomeDataState = {
   isLoading: boolean;
   data: any[];
   asOf: number;
 };
 
-type ACTIONS = "SET_DATA";
+type ACTIONS = "SET_DATA" | "SET_LOADING";
 const SET_DATA = "SET_DATA";
+const SET_LOADING = "SET_LOADING";
 
 const reducer = (
   state: TakeHomeDataState,
@@ -32,8 +34,16 @@ const reducer = (
   const { type } = action;
   let newState;
   switch (type) {
+    case SET_LOADING:
+      newState = { ...state, isLoading: true };
+      break;
     case SET_DATA:
-      newState = { ...state, data: action.payload || [], asOf: Date.now() };
+      newState = {
+        ...state,
+        data: action.payload || [],
+        asOf: Date.now(),
+        isLoading: false,
+      };
       break;
     default:
       console.warn("unhandled action", action);
@@ -51,6 +61,8 @@ export const TakeHomeDataProvider = ({
 
   const load = useCallback(() => {
     (async () => {
+      dispatch({ type: SET_LOADING });
+      await artificialDelay();
       const response = await fetch("https://dummyjson.com/products");
       if (response.ok) {
         const data = await response.json();

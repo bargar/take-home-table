@@ -1,4 +1,5 @@
 import React from "react";
+import { TakeHomeDataState } from "../contexts/TakeHomeData.tsx";
 
 type RendererProps = {
   children: React.ReactNode;
@@ -17,10 +18,10 @@ export type TakeHomeTableColumn = {
 
 type TakeHomeTableProps = {
   columns: TakeHomeTableColumn[];
-  data: any[];
+  state: TakeHomeDataState;
 };
 
-export const TakeHomeTable = ({ columns, data = [] }: TakeHomeTableProps) => (
+export const TakeHomeTable = ({ columns, state }: TakeHomeTableProps) => (
   <table>
     <thead>
       <tr>
@@ -32,19 +33,25 @@ export const TakeHomeTable = ({ columns, data = [] }: TakeHomeTableProps) => (
       </tr>
     </thead>
     <tbody>
-      {data.map((row) => (
-        <tr key={JSON.stringify(row)}>
-          {columns.map(({ fieldName, Renderer }) => (
-            <td key={fieldName}>
-              {Renderer ? (
-                <Renderer value={row[fieldName]}>{row[fieldName]}</Renderer>
-              ) : (
-                row[fieldName]
-              )}
-            </td>
-          ))}
+      {state.isLoading ? (
+        <tr>
+          <td colSpan={columns.length}>Loading...</td>
         </tr>
-      ))}
+      ) : (
+        state.data.map((row) => (
+          <tr key={JSON.stringify(row)}>
+            {columns.map(({ fieldName, Renderer }) => (
+              <td key={fieldName}>
+                {Renderer ? (
+                  <Renderer value={row[fieldName]}>{row[fieldName]}</Renderer>
+                ) : (
+                  row[fieldName]
+                )}
+              </td>
+            ))}
+          </tr>
+        ))
+      )}
     </tbody>
   </table>
 );

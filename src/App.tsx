@@ -1,80 +1,16 @@
 import "./App.css";
 import styled from "styled-components";
-import {
-  TakeHomeRenderer,
-  TakeHomeTable,
-  TakeHomeTableColumn,
-} from "./components/TakeHomeTable.tsx";
-import products from "./data/products.ts";
+import Products from "./components/Products.tsx";
 
 function App() {
   return (
     <>
       <Logo>🧮</Logo>
       <h1>take-home-table</h1>
-      <TakeHomeTable columns={columns} data={products.products} />
+      <Products />
     </>
   );
 }
-
-const formatPrice = (price: string | number) => `$${price}`;
-const PriceRenderer: TakeHomeRenderer = ({ value }) => formatPrice(value);
-const RatingRenderer: TakeHomeRenderer = ({ value }) => {
-  const maxStars = 5;
-  const starCount = Math.round(value as number);
-  const stars = "".padEnd(starCount, "★").padEnd(maxStars, "☆");
-  return <div title={`${value} out of ${maxStars}`}>{stars}</div>;
-};
-const columns: TakeHomeTableColumn[] = [
-  {
-    fieldName: "id",
-    label: "ID",
-  },
-  {
-    fieldName: "title",
-    label: "Title",
-  },
-  {
-    fieldName: "description",
-    label: "Description",
-  },
-  {
-    fieldName: "price",
-    label: "Price",
-    Renderer: PriceRenderer,
-  },
-  {
-    fieldName: "discountPercentage",
-    label: "Discount",
-    Renderer: PriceRenderer,
-  },
-  {
-    fieldName: "rating",
-    label: "Rating",
-    title: "Rating out of 5",
-    Renderer: RatingRenderer,
-  },
-  {
-    fieldName: "stock",
-    label: "Stock",
-  },
-  {
-    fieldName: "brand",
-    label: "Brand",
-  },
-  {
-    fieldName: "category",
-    label: "Category",
-  },
-  // {
-  //   fieldName: "thumbnail",
-  //   label: "Thumbnail",
-  // },
-  // {
-  //   fieldName: "images",
-  //   label: "Images",
-  // },
-];
 
 const Logo = styled.div`
   padding: 1.5em;

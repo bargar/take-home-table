@@ -18,10 +18,12 @@ const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "id",
     label: "ID",
+    sortable: true,
   },
   {
     fieldName: "title",
     label: "Title",
+    sortable: true,
   },
   {
     fieldName: "description",
@@ -30,30 +32,36 @@ const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "price",
     label: "Price",
+    sortable: true,
     Renderer: PriceRenderer,
   },
   {
     fieldName: "discountPercentage",
     label: "Discount",
+    sortable: true,
     Renderer: PriceRenderer,
   },
   {
     fieldName: "rating",
     label: "Rating",
     title: "Rating out of 5",
+    sortable: true,
     Renderer: RatingRenderer,
   },
   {
     fieldName: "stock",
     label: "Stock",
+    sortable: true,
   },
   {
     fieldName: "brand",
     label: "Brand",
+    sortable: true,
   },
   {
     fieldName: "category",
     label: "Category",
+    sortable: true,
   },
   // {
   //   fieldName: "thumbnail",
@@ -65,7 +73,8 @@ const columns: TakeHomeTableColumn[] = [
   // },
 ];
 const Products = () => {
-  const { load, setPage, setPageSize, state } = useContext(TakeHomeDataContext);
+  const { load, setPage, setPageSize, setSort, state } =
+    useContext(TakeHomeDataContext);
 
   // initial load
   useEffect(() => {
@@ -78,6 +87,7 @@ const Products = () => {
       state={state}
       setPage={setPage}
       setPageSize={setPageSize}
+      setSort={setSort}
     />
   );
 };

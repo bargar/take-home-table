@@ -19,7 +19,12 @@ function App() {
 
 const formatPrice = (price: string | number) => `$${price}`;
 const PriceRenderer: TakeHomeRenderer = ({ value }) => formatPrice(value);
-
+const RatingRenderer: TakeHomeRenderer = ({ value }) => {
+  const maxStars = 5;
+  const starCount = Math.round(value as number);
+  const stars = "".padEnd(starCount, "★").padEnd(maxStars, "☆");
+  return <div title={`${value} out of ${maxStars}`}>{stars}</div>;
+};
 const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "id",
@@ -47,6 +52,7 @@ const columns: TakeHomeTableColumn[] = [
     fieldName: "rating",
     label: "Rating",
     title: "Rating out of 5",
+    Renderer: RatingRenderer,
   },
   {
     fieldName: "stock",

@@ -694,7 +694,7 @@ export default [
   },
   {
     id: 37,
-    title: "ank Tops for Womens/Girls",
+    title: "Tank Tops for Womens/Girls",
     description:
       "PACK OF 3 CAMISOLES ,VERY COMFORTABLE SOFT COTTON STUFF, COMFORTABLE IN ALL FOUR SEASONS",
     price: 50,
@@ -1645,7 +1645,7 @@ export default [
   },
   {
     id: 87,
-    title: "t Temperature Controller Incubator Controller",
+    title: "Temperature Controller Incubator Controller",
     description:
       "Both Heat and Cool Purpose, Temperature control range; -50 to +110, Temperature measurement accuracy; 0.1, Control accuracy; 0.1",
     price: 40,

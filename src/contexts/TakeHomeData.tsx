@@ -1,10 +1,6 @@
 import React, { createContext, useCallback, useReducer } from "react";
 import { artificialDelay } from "../util.ts";
-
-export const PAGE_SIZES = [5, 10, 50, 100];
-const URL = "https://dummyjson.com/products";
-const composeUrl = (page: number = 1, pageSize: number = 10) =>
-  `${URL}?limit=${pageSize}&skip=${(page - 1) * pageSize}`;
+import { mockFetch } from "../data/api.ts";
 
 type TakeHomeDataContextValue = {
   load: () => void;
@@ -103,13 +99,10 @@ export const TakeHomeDataProvider = ({
       (async () => {
         dispatch({ type: SET_LOADING });
         await artificialDelay();
-        const response = await fetch(composeUrl(page, pageSize));
-        if (response.ok) {
-          const { products: data, total } = await response.json();
-          dispatch({ type: SET_DATA, payload: { data, total } });
-        } else {
-          console.error("Error loading data");
-        }
+        const response = await mockFetch("products", { page, pageSize });
+        console.log("response", response);
+        const { data, total } = response;
+        dispatch({ type: SET_DATA, payload: { data, total } });
       })();
     },
     [dispatch],

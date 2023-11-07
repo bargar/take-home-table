@@ -1,5 +1,6 @@
 import React from "react";
-import { PAGE_SIZES, TakeHomeDataState } from "../contexts/TakeHomeData.tsx";
+import { TakeHomeDataState } from "../contexts/TakeHomeData.tsx";
+import { PAGE_SIZES } from "../data/api.ts";
 
 type RendererProps = {
   children: React.ReactNode;

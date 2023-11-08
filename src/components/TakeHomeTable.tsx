@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
+import {
+  FunctionComponent,
+  ReactNode,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 import { useDebounce } from "@uidotdev/usehooks";
+import styled from "styled-components";
 import {
   DeselectItem,
   SelectItem,
@@ -9,16 +16,14 @@ import {
   SetSort,
   TakeHomeDataState,
 } from "../contexts/TakeHomeData.tsx";
-import { PAGE_SIZES } from "../data/api.ts";
-import styled from "styled-components";
-import { Identifiable } from "../data/api.ts";
+import { PAGE_SIZES, Identifiable } from "../data/api.ts";
 
 type RendererProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   value: string | number;
   item: any;
 };
-export type TakeHomeRenderer = React.FunctionComponent<RendererProps>;
+export type TakeHomeRenderer = FunctionComponent<RendererProps>;
 
 export type TakeHomeTableColumn = {
   fieldName: string;
@@ -116,8 +121,10 @@ export const TakeHomeTable = ({
       {filterColumn && (
         <FilterInput
           placeholder={`Filter by ${filterColumn.label}`}
-          onChange={(event) => setFilterInput(event.target.value)}
-          onKeyUp={(event) => {
+          onChange={(event: SyntheticEvent) =>
+            setFilterInput((event.target as HTMLInputElement).value)
+          }
+          onKeyUp={(event: KeyboardEvent) => {
             if (event.key === "Escape") setFilterInput("");
           }}
           value={filterInput}

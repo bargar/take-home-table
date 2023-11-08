@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 import {
   SetFilter,
   SetPage,
@@ -90,17 +91,17 @@ export const TakeHomeTable = ({
 }: TakeHomeTableProps) => {
   const filterColumn = columns.find((column) => column.filterable);
   const [filterInput, setFilterInput] = useState("");
+  const debouncedFilterInput = useDebounce(filterInput, 300);
   useEffect(() => {
     if (filterColumn) {
-      setFilter(filterColumn.fieldName, filterInput);
+      setFilter(filterColumn.fieldName, debouncedFilterInput);
     }
-  }, [filterInput, filterColumn, filterColumn?.fieldName, setFilter]);
+  }, [debouncedFilterInput, filterColumn, filterColumn?.fieldName, setFilter]);
   return (
     <>
       {filterColumn && (
         <input
           placeholder={`Filter by ${filterColumn.label}`}
-          // TODO debounce
           onChange={(event) => setFilterInput(event.target.value)}
           onKeyUp={(event) => {
             if (event.key === "Escape") setFilterInput("");

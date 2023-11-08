@@ -2,6 +2,38 @@
 
 ![take-home-table](doc/take-home-table.png)
 
+```javascript
+const columns: TakeHomeTableColumn[] = [
+    {
+        fieldName: "id",
+        label: "ID",
+        sortable: true, // makes column header a sort button
+    },
+    {
+        fieldName: "description",
+        label: "Description",
+        filterable: true, // makes column searchable with a text input above table
+        // Component to render longer text, using ellipsis when too long and providing mouseover title.
+        Renderer: TextRenderer,
+    },
+    {
+        fieldName: "rating",
+        label: "Rating",
+        title: "Rating out of 5",
+        sortable: true,
+        // Component to express rating as star icons 
+        Renderer: RatingRenderer,
+    }
+];
+
+// table is configured mostly via its columns and data is provided (and state is managed) via a TakeHomeDataProvider
+const Products = () => (
+    <TakeHomeDataProvider resource="products">
+        <TakeHomeTable columns={columns} autoFocus/>
+    </TakeHomeDataProvider>
+);
+```
+
 ## Annotated Features
 
 ![take-home-table annotated](doc/take-home-table-annotated.png)

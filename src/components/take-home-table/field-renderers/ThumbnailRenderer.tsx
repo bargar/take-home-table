@@ -21,6 +21,9 @@ const ThumbnailRenderer: TakeHomeRenderer = ({ value, item }) => {
 
 const Thumbnail = styled.img`
   height: 75px;
+  max-width: 150px;
+  width: 150px;
+  object-fit: cover;
 `;
 
 export default ThumbnailRenderer;

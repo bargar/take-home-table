@@ -40,6 +40,7 @@ type TakeHomeTableProps = {
   deselectItem: DeselectItem;
   // override this for custom logic to determine the ID of an item
   idForItem?: (item: Identifiable) => string;
+  autoFocus: boolean;
 };
 
 const setNextSort = (
@@ -99,6 +100,7 @@ export const TakeHomeTable = ({
   selectItem,
   deselectItem,
   idForItem = (item) => item.id,
+  autoFocus = true,
 }: TakeHomeTableProps) => {
   const filterColumn = columns.find((column) => column.filterable);
   const [filterInput, setFilterInput] = useState("");
@@ -119,7 +121,7 @@ export const TakeHomeTable = ({
             if (event.key === "Escape") setFilterInput("");
           }}
           value={filterInput}
-          autoFocus
+          autoFocus={autoFocus}
         />
       )}
       <Table>

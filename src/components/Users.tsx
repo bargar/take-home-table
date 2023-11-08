@@ -61,6 +61,7 @@ const Users = () => {
       setFilter={setFilter}
       selectItem={selectItem}
       deselectItem={deselectItem}
+      autoFocus={false}
     />
   );
 };

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  SetFilter,
   SetPage,
   SetPageSize,
   SetSort,
@@ -29,6 +30,7 @@ type TakeHomeTableProps = {
   setPageSize: SetPageSize;
   setPage: SetPage;
   setSort: SetSort;
+  setFilter: SetFilter;
 };
 
 const setNextSort = (
@@ -84,78 +86,102 @@ export const TakeHomeTable = ({
   setPage,
   setPageSize,
   setSort,
-}: TakeHomeTableProps) => (
-  <>
-    <table>
-      <thead>
-        <tr>
-          {columns.map(({ fieldName, title, label, sortable }) => (
-            <th key={fieldName} title={title}>
-              {sortable ? (
-                <ColumnHeaderButton
-                  title={nextSortForField(fieldName, label, title, state)}
-                  onClick={() => setNextSort(fieldName, state, setSort)}
-                >
-                  {label}{" "}
-                  <SortIndicator>
-                    {sortIndicator(state, fieldName)}
-                  </SortIndicator>
-                </ColumnHeaderButton>
-              ) : (
-                label
-              )}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {state.isLoading ? (
+  setFilter,
+}: TakeHomeTableProps) => {
+  const filterColumn = columns.find((column) => column.filterable);
+  const [filterInput, setFilterInput] = useState("");
+  useEffect(() => {
+    if (filterColumn) {
+      setFilter(filterColumn.fieldName, filterInput);
+    }
+  }, [filterInput, filterColumn, filterColumn?.fieldName, setFilter]);
+  return (
+    <>
+      {filterColumn && (
+        <input
+          placeholder={`Filter by ${filterColumn.label}`}
+          // TODO debounce
+          onChange={(event) => setFilterInput(event.target.value)}
+          onKeyUp={(event) => {
+            if (event.key === "Escape") setFilterInput("");
+          }}
+          value={filterInput}
+          autoFocus
+        />
+      )}
+      <table>
+        <thead>
           <tr>
-            <td colSpan={columns.length}>Loading...</td>
+            {columns.map(({ fieldName, title, label, sortable }) => (
+              <th key={fieldName} title={title}>
+                {sortable ? (
+                  <ColumnHeaderButton
+                    title={nextSortForField(fieldName, label, title, state)}
+                    onClick={() => setNextSort(fieldName, state, setSort)}
+                  >
+                    {label}{" "}
+                    <SortIndicator>
+                      {sortIndicator(state, fieldName)}
+                    </SortIndicator>
+                  </ColumnHeaderButton>
+                ) : (
+                  label
+                )}
+              </th>
+            ))}
           </tr>
-        ) : (
-          state.data.map((row) => (
-            <tr key={JSON.stringify(row)}>
-              {columns.map(({ fieldName, Renderer }) => (
-                <td key={fieldName}>
-                  {Renderer ? (
-                    <Renderer value={row[fieldName]}>{row[fieldName]}</Renderer>
-                  ) : (
-                    row[fieldName]
-                  )}
-                </td>
-              ))}
+        </thead>
+        <tbody>
+          {state.isLoading ? (
+            <tr>
+              <td colSpan={columns.length}>Loading...</td>
             </tr>
-          ))
-        )}
-      </tbody>
-    </table>
-    {!state.isLoading && (
-      <div>
-        <button
-          onClick={() => setPage(state.page - 1)}
-          disabled={state.page <= 1}
-        >
-          ⬅️
-        </button>
-        Page {state.page} / {state.totalPages}
-        <button
-          onClick={() => setPage(state.page + 1)}
-          disabled={state.page >= state.totalPages}
-        >
-          ➡️
-        </button>
-        <hr />
-        Page Size {state.pageSize}
-        {PAGE_SIZES.map((pageSize) => (
-          <button key={pageSize} onClick={() => setPageSize(pageSize)}>
-            {pageSize}
+          ) : (
+            state.data.map((row) => (
+              <tr key={JSON.stringify(row)}>
+                {columns.map(({ fieldName, Renderer }) => (
+                  <td key={fieldName}>
+                    {Renderer ? (
+                      <Renderer value={row[fieldName]}>
+                        {row[fieldName]}
+                      </Renderer>
+                    ) : (
+                      row[fieldName]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+      {!state.isLoading && (
+        <div>
+          <button
+            onClick={() => setPage(state.page - 1)}
+            disabled={state.page <= 1}
+          >
+            ⬅️
           </button>
-        ))}
-      </div>
-    )}
-  </>
-);
+          Page {state.page} / {state.totalPages}
+          <button
+            onClick={() => setPage(state.page + 1)}
+            disabled={state.page >= state.totalPages}
+          >
+            ➡️
+          </button>
+          <hr />
+          Page Size {state.pageSize}
+          {PAGE_SIZES.map((pageSize) => (
+            <button key={pageSize} onClick={() => setPageSize(pageSize)}>
+              {pageSize}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
 
 const ColumnHeaderButton = styled.button`
   white-space: nowrap;

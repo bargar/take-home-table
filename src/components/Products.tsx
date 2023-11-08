@@ -28,6 +28,7 @@ const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "description",
     label: "Description",
+    filterable: true,
   },
   {
     fieldName: "price",
@@ -73,7 +74,7 @@ const columns: TakeHomeTableColumn[] = [
   // },
 ];
 const Products = () => {
-  const { load, setPage, setPageSize, setSort, state } =
+  const { load, setPage, setPageSize, setSort, setFilter, state } =
     useContext(TakeHomeDataContext);
 
   // initial load
@@ -88,6 +89,7 @@ const Products = () => {
       setPage={setPage}
       setPageSize={setPageSize}
       setSort={setSort}
+      setFilter={setFilter}
     />
   );
 };

@@ -1,6 +1,7 @@
 import "./App.css";
 import styled from "styled-components";
 import Products from "./components/Products.tsx";
+import Users from "./components/Users.tsx";
 import { TakeHomeDataProvider } from "./contexts/TakeHomeData.tsx";
 
 function App() {
@@ -8,8 +9,17 @@ function App() {
     <>
       <Logo>🧮</Logo>
       <h1>take-home-table</h1>
+
+      <h2>Products</h2>
+      <hr />
       <TakeHomeDataProvider resource="products">
         <Products />
+      </TakeHomeDataProvider>
+
+      <h2>Users</h2>
+      <hr />
+      <TakeHomeDataProvider resource="users">
+        <Users />
       </TakeHomeDataProvider>
     </>
   );

@@ -1,5 +1,6 @@
 import products from "./products";
-export type Resource = "products";
+import users from "./users";
+export type Resource = "products" | "users";
 export type Identifiable = object & { id: string };
 type Options = {
   page: number;
@@ -9,18 +10,22 @@ type Options = {
   filterField?: string;
   filterValue?: string;
 };
+const resources = {
+  products,
+  users,
+};
+
 export const mockFetch = async (resource: Resource, options: Options) => {
-  if (resource !== "products") {
-    throw new Error(`unrecognized resource ${resource}`);
-  }
   const { page, pageSize, sortField, sortAscending, filterField, filterValue } =
     options;
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
+  const raw = resources[resource];
+  if (!raw) {
+    throw new Error(`unrecognized resource ${resource}`);
+  }
   const filtered =
-    filterField && filterValue
-      ? filter(products, filterField, filterValue)
-      : products;
+    filterField && filterValue ? filter(raw, filterField, filterValue) : raw;
   const total = filtered.length;
   const sorted = sortField
     ? sort(filtered, sortField, sortAscending)

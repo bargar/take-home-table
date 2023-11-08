@@ -4,7 +4,7 @@ import styled from "styled-components";
 const ThumbnailRenderer: TakeHomeRenderer = ({ value, item }) => {
   return (
     <a
-      href={item.images[0]}
+      href={item.images?.[0] || value}
       title="Open Image in New Window"
       target="detailImage"
     >
@@ -14,7 +14,6 @@ const ThumbnailRenderer: TakeHomeRenderer = ({ value, item }) => {
 };
 
 const Thumbnail = styled.img`
-  //width: 100px;
   height: 75px;
 `;
 

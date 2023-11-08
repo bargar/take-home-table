@@ -16,6 +16,7 @@ import { Identifiable } from "../data/api.ts";
 type RendererProps = {
   children: React.ReactNode;
   value: string | number;
+  item: any;
 };
 export type TakeHomeRenderer = React.FunctionComponent<RendererProps>;
 
@@ -166,7 +167,7 @@ export const TakeHomeTable = ({
                 {columns.map(({ fieldName, Renderer }) => (
                   <td key={fieldName}>
                     {Renderer ? (
-                      <Renderer value={row[fieldName]}>
+                      <Renderer value={row[fieldName]} item={row}>
                         {row[fieldName]}
                       </Renderer>
                     ) : (

@@ -1,19 +1,10 @@
-import {
-  TakeHomeRenderer,
-  TakeHomeTable,
-  TakeHomeTableColumn,
-} from "./TakeHomeTable.tsx";
+import { TakeHomeTable, TakeHomeTableColumn } from "./TakeHomeTable.tsx";
 import { useContext, useEffect } from "react";
 import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
+import PriceRenderer from "./field-renderers/PriceRenderer.tsx";
+import RatingRenderer from "./field-renderers/RatingRenderer.tsx";
+import ThumbnailRenderer from "./field-renderers/ThumbnailRenderer.tsx";
 
-const formatPrice = (price: string | number) => `$${price}`;
-const PriceRenderer: TakeHomeRenderer = ({ value }) => formatPrice(value);
-const RatingRenderer: TakeHomeRenderer = ({ value }) => {
-  const maxStars = 5;
-  const starCount = Math.round(value as number);
-  const stars = "".padEnd(starCount, "★").padEnd(maxStars, "☆");
-  return <div title={`${value} out of ${maxStars}`}>{stars}</div>;
-};
 const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "id",
@@ -64,14 +55,11 @@ const columns: TakeHomeTableColumn[] = [
     label: "Category",
     sortable: true,
   },
-  // {
-  //   fieldName: "thumbnail",
-  //   label: "Thumbnail",
-  // },
-  // {
-  //   fieldName: "images",
-  //   label: "Images",
-  // },
+  {
+    fieldName: "thumbnail",
+    label: "Thumbnail",
+    Renderer: ThumbnailRenderer,
+  },
 ];
 const Products = () => {
   const {

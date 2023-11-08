@@ -1,5 +1,5 @@
 import { TakeHomeTable, TakeHomeTableColumn } from "./TakeHomeTable.tsx";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
 import PriceRenderer from "./field-renderers/PriceRenderer.tsx";
 import RatingRenderer from "./field-renderers/RatingRenderer.tsx";
@@ -63,7 +63,6 @@ const columns: TakeHomeTableColumn[] = [
 ];
 const Products = () => {
   const {
-    load,
     setPage,
     setPageSize,
     setSort,
@@ -72,12 +71,6 @@ const Products = () => {
     deselectItem,
     state,
   } = useContext(TakeHomeDataContext);
-
-  // initial load
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <TakeHomeTable

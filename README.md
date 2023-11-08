@@ -1,12 +1,12 @@
 # 🧮 take-home-table
 
-![take-home-table](take-home-table.png)
+![take-home-table](doc/take-home-table.png)
 
 ## Annotated Features
 
-![take-home-table annotated](take-home-table-annotated.png)
+![take-home-table annotated](doc/take-home-table-annotated.png)
 
-1. Filter by one field
+1. Filter by one field based on debounced user input, escape key to clear
 2. Button to toggle column sort between ascending, descending and off
 3. Item selection, persists across pages and sorting (but reset on filter)
 4. Custom JSX cell rendering
@@ -14,6 +14,24 @@
 6. "
 7. Change page size
 8. Pagination controls
+
+## Feature Mini-Demos
+
+### Filtering
+
+![filtering](doc/filtering.gif)
+
+### Sorting
+
+![sorting](doc/sorting.gif)
+
+### Item Selection
+
+![item selection](doc/selection.gif)
+
+### Pagination
+
+![pagination](doc/pagination.gif)
 
 ## Installation
 

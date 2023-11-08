@@ -126,7 +126,7 @@ export const TakeHomeTable = ({
           ))}
         </tbody>
       </Table>
-      // pagination UI
+      {/* pagination UI */}
       <Footer>
         <div>
           Page Size

@@ -2,8 +2,6 @@ import {
   TakeHomeTable,
   TakeHomeTableColumn,
 } from "./take-home-table/TakeHomeTable.tsx";
-import { useContext } from "react";
-import { TakeHomeDataContext } from "./take-home-table/TakeHomeDataContext.tsx";
 import PriceRenderer from "./take-home-table/field-renderers/PriceRenderer.tsx";
 import RatingRenderer from "./take-home-table/field-renderers/RatingRenderer.tsx";
 import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
@@ -56,29 +54,6 @@ const columns: TakeHomeTableColumn[] = [
     Renderer: ThumbnailRenderer,
   },
 ];
-const Products = () => {
-  const {
-    setPage,
-    setPageSize,
-    setSort,
-    setFilter,
-    selectItem,
-    deselectItem,
-    state,
-  } = useContext(TakeHomeDataContext);
-
-  return (
-    <TakeHomeTable
-      columns={columns}
-      state={state}
-      setPage={setPage}
-      setPageSize={setPageSize}
-      setSort={setSort}
-      setFilter={setFilter}
-      selectItem={selectItem}
-      deselectItem={deselectItem}
-    />
-  );
-};
+const Products = () => <TakeHomeTable columns={columns} />;
 
 export default Products;

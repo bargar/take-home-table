@@ -1,15 +1,7 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import styled from "styled-components";
-import {
-  DeselectItem,
-  SelectItem,
-  SetFilter,
-  SetPage,
-  SetPageSize,
-  SetSort,
-  TakeHomeDataState,
-} from "./TakeHomeDataContext.tsx";
+import { TakeHomeDataContext } from "./TakeHomeDataContext.tsx";
 import { PAGE_SIZES, Identifiable } from "../../data/api.ts";
 import { TakeHomeRenderer } from "./TakeHomeRenderer.tsx";
 import { nextSortForField, setNextSort, sortIndicator } from "./sorting.ts";
@@ -25,13 +17,6 @@ export type TakeHomeTableColumn = {
 
 type TakeHomeTableProps = {
   columns: TakeHomeTableColumn[];
-  state: TakeHomeDataState;
-  setPageSize: SetPageSize;
-  setPage: SetPage;
-  setSort: SetSort;
-  setFilter: SetFilter;
-  selectItem: SelectItem;
-  deselectItem: DeselectItem;
   // override this for custom logic to determine the ID of an item
   idForItem?: (item: Identifiable) => string;
   autoFocus?: boolean;
@@ -39,16 +24,19 @@ type TakeHomeTableProps = {
 
 export const TakeHomeTable = ({
   columns,
-  state,
-  setPage,
-  setPageSize,
-  setSort,
-  setFilter,
-  selectItem,
-  deselectItem,
   idForItem = (item) => item.id,
   autoFocus = true,
 }: TakeHomeTableProps) => {
+  const {
+    setPage,
+    setPageSize,
+    setSort,
+    setFilter,
+    selectItem,
+    deselectItem,
+    state,
+  } = useContext(TakeHomeDataContext);
+
   const filterColumn = columns.find((column) => column.filterable);
   const [filterInput, setFilterInput] = useState("");
   const debouncedFilterInput = useDebounce(filterInput, 300);

@@ -2,8 +2,6 @@ import {
   TakeHomeTable,
   TakeHomeTableColumn,
 } from "./take-home-table/TakeHomeTable.tsx";
-import { useContext } from "react";
-import { TakeHomeDataContext } from "./take-home-table/TakeHomeDataContext.tsx";
 import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
 import AddressRenderer from "./take-home-table/field-renderers/AddressRenderer.tsx";
 const columns: TakeHomeTableColumn[] = [
@@ -43,30 +41,7 @@ const columns: TakeHomeTableColumn[] = [
     Renderer: AddressRenderer,
   },
 ];
-const Users = () => {
-  const {
-    setPage,
-    setPageSize,
-    setSort,
-    setFilter,
-    selectItem,
-    deselectItem,
-    state,
-  } = useContext(TakeHomeDataContext);
 
-  return (
-    <TakeHomeTable
-      columns={columns}
-      state={state}
-      setPage={setPage}
-      setPageSize={setPageSize}
-      setSort={setSort}
-      setFilter={setFilter}
-      selectItem={selectItem}
-      deselectItem={deselectItem}
-      autoFocus={false}
-    />
-  );
-};
+const Users = () => <TakeHomeTable columns={columns} autoFocus={false} />;
 
 export default Users;

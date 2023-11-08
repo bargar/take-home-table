@@ -31,7 +31,9 @@ export const mockFetch = async (resource: Resource, options: Options) => {
 const filter = (data: any[], field: string, value: string) =>
   data
     .slice()
-    .filter((item) => item[field].toLowerCase().includes(value.toLowerCase()));
+    .filter((item) =>
+      String(item[field]).toLowerCase().includes(value.toLowerCase()),
+    );
 
 const sort = (data: any[], field: string, ascending: boolean) =>
   data.slice().sort((a, b) => {

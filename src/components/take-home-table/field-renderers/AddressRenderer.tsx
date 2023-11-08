@@ -1,5 +1,11 @@
 import { TakeHomeRenderer } from "../TakeHomeRenderer.ts";
 
+/**
+ * Given a street address and longitude and latitude, show the former as a human-friendly link to Google Maps based
+ * on the latter.
+ * @param item
+ * @constructor
+ */
 const AddressRenderer: TakeHomeRenderer = ({ item }) => {
   const {
     address,

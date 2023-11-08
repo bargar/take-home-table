@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import { TakeHomeRenderer } from "../TakeHomeRenderer.ts";
 
+/**
+ * Show an image inline, allowing it to be opened in a new window for greater detail.
+ * @param value
+ * @param item
+ * @constructor
+ */
 const ThumbnailRenderer: TakeHomeRenderer = ({ value, item }) => {
   return (
     <a

@@ -1,5 +1,6 @@
 import products from "./products";
 import users from "./users";
+import { artificialDelay } from "../util.ts";
 export type Resource = "products" | "users";
 export type Identifiable = object & { id: string };
 type Options = {
@@ -16,6 +17,8 @@ const resources = {
 };
 
 export const mockFetch = async (resource: Resource, options: Options) => {
+  // simulate network, other latency
+  await artificialDelay();
   const { page, pageSize, sortField, sortAscending, filterField, filterValue } =
     options;
   const start = (page - 1) * pageSize;

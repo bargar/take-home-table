@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useReducer } from "react";
-import { artificialDelay } from "../../util.ts";
 import { mockFetch, Resource } from "../../data/api.ts";
 
 const DEFAULT_PAGE_SIZE = 5;
@@ -211,7 +210,6 @@ export const TakeHomeDataProvider = ({
     ) => {
       (async () => {
         dispatch({ type: SET_LOADING });
-        await artificialDelay();
         try {
           const response = await mockFetch(resource, {
             page,

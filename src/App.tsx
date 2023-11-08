@@ -16,7 +16,6 @@ function App() {
 }
 
 const Logo = styled.div`
-  padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
   font-size: 96px;

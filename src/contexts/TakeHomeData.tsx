@@ -190,19 +190,23 @@ export const TakeHomeDataProvider = ({
       (async () => {
         dispatch({ type: SET_LOADING });
         await artificialDelay();
-        const response = await mockFetch(resource, {
-          page,
-          pageSize,
-          sortField,
-          sortAscending,
-          filterField,
-          filterValue,
-        });
-        const { data, total } = response;
-        dispatch({ type: SET_DATA, payload: { data, total } });
+        try {
+          const response = await mockFetch(resource, {
+            page,
+            pageSize,
+            sortField,
+            sortAscending,
+            filterField,
+            filterValue,
+          });
+          const { data, total } = response;
+          dispatch({ type: SET_DATA, payload: { data, total } });
+        } catch (err) {
+          dispatch({ type: SET_DATA, payload: { data: [], total: 0 } });
+        }
       })();
     },
-    [dispatch],
+    [resource],
   );
 
   const setPage: SetPage = useCallback(

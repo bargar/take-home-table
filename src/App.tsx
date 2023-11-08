@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Products from "./components/Products.tsx";
 import Users from "./components/Users.tsx";
 import { TakeHomeDataProvider } from "./components/take-home-table/TakeHomeDataContext.tsx";
-import { Resource } from "./data/api.ts";
+import { ReactNode } from "react";
 
 function App() {
   return (
@@ -11,33 +11,33 @@ function App() {
       <Logo>🧮</Logo>
       <h1>take-home-table</h1>
 
-      <Example resource="products" title="Products">
-        <Products />
+      <Example title="Products">
+        <TakeHomeDataProvider resource="products">
+          <Products />
+        </TakeHomeDataProvider>
       </Example>
 
-      <Example resource="users" title="Users">
-        <Users />
+      <Example title="Users">
+        <TakeHomeDataProvider resource="users">
+          <Users />
+        </TakeHomeDataProvider>
       </Example>
     </>
   );
 }
 
 const Example = ({
-  resource,
   title,
   children,
 }: {
-  resource: Resource;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   return (
     <Section>
       <h2>{title}</h2>
       <hr />
-      <TakeHomeDataProvider resource={resource}>
-        {children}
-      </TakeHomeDataProvider>
+      {children}
     </Section>
   );
 };

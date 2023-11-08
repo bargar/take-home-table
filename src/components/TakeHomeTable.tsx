@@ -112,7 +112,7 @@ export const TakeHomeTable = ({
   return (
     <>
       {filterColumn && (
-        <input
+        <FilterInput
           placeholder={`Filter by ${filterColumn.label}`}
           onChange={(event) => setFilterInput(event.target.value)}
           onKeyUp={(event) => {
@@ -122,12 +122,12 @@ export const TakeHomeTable = ({
           autoFocus
         />
       )}
-      <table>
+      <Table>
         <thead>
-          <tr>
-            <th>&nbsp;</th>
+          <HeaderRow>
+            <ColumnHeader>&nbsp;</ColumnHeader>
             {columns.map(({ fieldName, title, label, sortable }) => (
-              <th key={fieldName} title={title}>
+              <ColumnHeader key={fieldName} title={title}>
                 {sortable ? (
                   <ColumnHeaderButton
                     title={nextSortForField(fieldName, label, title, state)}
@@ -141,14 +141,16 @@ export const TakeHomeTable = ({
                 ) : (
                   label
                 )}
-              </th>
+              </ColumnHeader>
             ))}
-          </tr>
+          </HeaderRow>
         </thead>
         <tbody>
           {state.isLoading ? (
             <tr>
-              <td colSpan={columnCountIncludingSelector}>Loading...</td>
+              <td colSpan={columnCountIncludingSelector}>
+                <LoadingIndicator>Loading...</LoadingIndicator>
+              </td>
             </tr>
           ) : (
             state.data.map((row) => (
@@ -179,30 +181,37 @@ export const TakeHomeTable = ({
             ))
           )}
         </tbody>
-      </table>
+      </Table>
       {!state.isLoading && (
-        <div>
-          <button
-            onClick={() => setPage(state.page - 1)}
-            disabled={state.page <= 1}
-          >
-            ⬅️
-          </button>
-          Page {state.page} / {state.totalPages}
-          <button
-            onClick={() => setPage(state.page + 1)}
-            disabled={state.page >= state.totalPages}
-          >
-            ➡️
-          </button>
-          <hr />
-          Page Size {state.pageSize}
-          {PAGE_SIZES.map((pageSize) => (
-            <button key={pageSize} onClick={() => setPageSize(pageSize)}>
-              {pageSize}
-            </button>
-          ))}
-        </div>
+        <Footer>
+          <div>
+            Page Size
+            {PAGE_SIZES.map((pageSize) => (
+              <FooterButton
+                key={pageSize}
+                onClick={() => setPageSize(pageSize)}
+                disabled={state.pageSize === pageSize}
+              >
+                {pageSize}
+              </FooterButton>
+            ))}
+          </div>
+          <div>
+            <FooterButton
+              onClick={() => setPage(state.page - 1)}
+              disabled={state.page <= 1}
+            >
+              ⬅️
+            </FooterButton>
+            Page {state.page} / {state.totalPages}
+            <FooterButton
+              onClick={() => setPage(state.page + 1)}
+              disabled={state.page >= state.totalPages}
+            >
+              ➡️
+            </FooterButton>
+          </div>
+        </Footer>
       )}
       {state.selected && Object.keys(state.selected).length > 0 && (
         <>
@@ -214,6 +223,23 @@ export const TakeHomeTable = ({
   );
 };
 
+const Table = styled.table`
+  width: 100%;
+`;
+
+const HeaderRow = styled.tr`
+  border-bottom: 2px solid gray;
+  background-color: dimgray;
+`;
+
+const ColumnHeader = styled.th`
+  padding: 0.5em;
+  font-weight: bold;
+  button {
+    margin: auto;
+  }
+`;
+
 const ColumnHeaderButton = styled.button`
   white-space: nowrap;
   display: flex;
@@ -222,4 +248,34 @@ const ColumnHeaderButton = styled.button`
 
 const SortIndicator = styled.div`
   margin-left: 0.5em;
+`;
+
+const FilterInput = styled.input`
+  float: right;
+  padding: 0.5em;
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 16px;
+  margin: 1em;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: dimgray;
+  padding: 0.5em;
+`;
+
+const FooterButton = styled.button`
+  margin: 0 0.5em;
+`;
+
+const LoadingIndicator = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  height: 200px;
 `;

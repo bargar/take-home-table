@@ -31,7 +31,7 @@ export const mockFetch = async (resource: Resource, options: Options) => {
     ? sort(filtered, sortField, sortAscending)
     : filtered;
   const paginated = sorted.slice(start, end);
-  return Promise.resolve({ total, data: paginated });
+  return Promise.resolve({ total, data: paginated, resource });
 };
 
 const filter = (data: any[], field: string, value: string) =>

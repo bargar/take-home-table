@@ -37,7 +37,7 @@ const initialState: TakeHomeDataState = {
   total: 0,
   asOf: Date.now(),
   page: 1,
-  pageSize: 10,
+  pageSize: 5,
   totalPages: 0,
   sortField: undefined,
   sortAscending: true,
@@ -181,7 +181,7 @@ export const TakeHomeDataProvider = ({
   const load: Load = useCallback(
     (
       page: number = 1,
-      pageSize: number = 10,
+      pageSize: number = 5,
       sortField: string | undefined = undefined,
       sortAscending: boolean = true,
       filterField: string | undefined = undefined,

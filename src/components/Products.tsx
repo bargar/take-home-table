@@ -4,6 +4,7 @@ import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
 import PriceRenderer from "./field-renderers/PriceRenderer.tsx";
 import RatingRenderer from "./field-renderers/RatingRenderer.tsx";
 import ThumbnailRenderer from "./field-renderers/ThumbnailRenderer.tsx";
+import TextRenderer from "./field-renderers/TextRenderer.tsx";
 
 const columns: TakeHomeTableColumn[] = [
   {
@@ -15,21 +16,17 @@ const columns: TakeHomeTableColumn[] = [
     fieldName: "title",
     label: "Title",
     sortable: true,
+    Renderer: TextRenderer,
   },
   {
     fieldName: "description",
     label: "Description",
     filterable: true,
+    Renderer: TextRenderer,
   },
   {
     fieldName: "price",
     label: "Price",
-    sortable: true,
-    Renderer: PriceRenderer,
-  },
-  {
-    fieldName: "discountPercentage",
-    label: "Discount",
     sortable: true,
     Renderer: PriceRenderer,
   },
@@ -48,11 +45,6 @@ const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "brand",
     label: "Brand",
-    sortable: true,
-  },
-  {
-    fieldName: "category",
-    label: "Category",
     sortable: true,
   },
   {

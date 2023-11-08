@@ -8,7 +8,7 @@ function App() {
     <>
       <Logo>🧮</Logo>
       <h1>take-home-table</h1>
-      <TakeHomeDataProvider>
+      <TakeHomeDataProvider resource="products">
         <Products />
       </TakeHomeDataProvider>
     </>

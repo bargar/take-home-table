@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import {
+  DeselectItem,
+  SelectItem,
   SetFilter,
   SetPage,
   SetPageSize,
@@ -9,6 +11,7 @@ import {
 } from "../contexts/TakeHomeData.tsx";
 import { PAGE_SIZES } from "../data/api.ts";
 import styled from "styled-components";
+import { Identifiable } from "../data/api.ts";
 
 type RendererProps = {
   children: React.ReactNode;
@@ -32,6 +35,10 @@ type TakeHomeTableProps = {
   setPage: SetPage;
   setSort: SetSort;
   setFilter: SetFilter;
+  selectItem: SelectItem;
+  deselectItem: DeselectItem;
+  // override this for custom logic to determine the ID of an item
+  idForItem?: (item: Identifiable) => string;
 };
 
 const setNextSort = (
@@ -88,10 +95,14 @@ export const TakeHomeTable = ({
   setPageSize,
   setSort,
   setFilter,
+  selectItem,
+  deselectItem,
+  idForItem = (item) => item.id,
 }: TakeHomeTableProps) => {
   const filterColumn = columns.find((column) => column.filterable);
   const [filterInput, setFilterInput] = useState("");
   const debouncedFilterInput = useDebounce(filterInput, 300);
+  const columnCountIncludingSelector = columns.length + 1;
   useEffect(() => {
     if (filterColumn) {
       setFilter(filterColumn.fieldName, debouncedFilterInput);
@@ -113,6 +124,7 @@ export const TakeHomeTable = ({
       <table>
         <thead>
           <tr>
+            <th>&nbsp;</th>
             {columns.map(({ fieldName, title, label, sortable }) => (
               <th key={fieldName} title={title}>
                 {sortable ? (
@@ -135,11 +147,22 @@ export const TakeHomeTable = ({
         <tbody>
           {state.isLoading ? (
             <tr>
-              <td colSpan={columns.length}>Loading...</td>
+              <td colSpan={columnCountIncludingSelector}>Loading...</td>
             </tr>
           ) : (
             state.data.map((row) => (
               <tr key={JSON.stringify(row)}>
+                <td>
+                  <input
+                    type="checkbox"
+                    onChange={(event) =>
+                      event.target.checked
+                        ? selectItem(idForItem(row), row)
+                        : deselectItem(idForItem(row))
+                    }
+                    checked={state.selected[idForItem(row)] || false}
+                  />
+                </td>
                 {columns.map(({ fieldName, Renderer }) => (
                   <td key={fieldName}>
                     {Renderer ? (
@@ -179,6 +202,12 @@ export const TakeHomeTable = ({
             </button>
           ))}
         </div>
+      )}
+      {state.selected && Object.keys(state.selected).length > 0 && (
+        <>
+          <h2>Selected</h2>
+          <pre>{JSON.stringify(state.selected, null, " ")}</pre>
+        </>
       )}
     </>
   );

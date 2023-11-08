@@ -74,8 +74,16 @@ const columns: TakeHomeTableColumn[] = [
   // },
 ];
 const Products = () => {
-  const { load, setPage, setPageSize, setSort, setFilter, state } =
-    useContext(TakeHomeDataContext);
+  const {
+    load,
+    setPage,
+    setPageSize,
+    setSort,
+    setFilter,
+    selectItem,
+    deselectItem,
+    state,
+  } = useContext(TakeHomeDataContext);
 
   // initial load
   useEffect(() => {
@@ -91,6 +99,8 @@ const Products = () => {
       setPageSize={setPageSize}
       setSort={setSort}
       setFilter={setFilter}
+      selectItem={selectItem}
+      deselectItem={deselectItem}
     />
   );
 };

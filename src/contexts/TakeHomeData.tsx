@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useReducer } from "react";
 import { artificialDelay } from "../util.ts";
-import { mockFetch } from "../data/api.ts";
+import { mockFetch, Resource } from "../data/api.ts";
 
 export type Load = (
   page?: number,
@@ -17,6 +17,8 @@ export type SetFilter = (
   field: string | undefined,
   value: string | undefined,
 ) => void;
+export type SelectItem = (id: string, item: any) => void;
+export type DeselectItem = (id: string) => void;
 
 type TakeHomeDataContextValue = {
   load: Load;
@@ -24,6 +26,8 @@ type TakeHomeDataContextValue = {
   setPageSize: SetPageSize;
   setSort: SetSort;
   setFilter: SetFilter;
+  selectItem: SelectItem;
+  deselectItem: DeselectItem;
   state: TakeHomeDataState;
 };
 
@@ -39,6 +43,7 @@ const initialState: TakeHomeDataState = {
   sortAscending: true,
   filterField: undefined,
   filterValue: undefined,
+  selected: {},
 };
 
 export const TakeHomeDataContext = createContext<TakeHomeDataContextValue>({
@@ -47,6 +52,8 @@ export const TakeHomeDataContext = createContext<TakeHomeDataContextValue>({
   setPageSize: () => {},
   setSort: () => {},
   setFilter: () => {},
+  selectItem: () => {},
+  deselectItem: () => {},
   state: initialState,
 });
 
@@ -62,6 +69,7 @@ export type TakeHomeDataState = {
   sortAscending: boolean;
   filterField: string | undefined;
   filterValue: string | undefined;
+  selected: Record<string, any>;
 };
 
 const SET_DATA = "SET_DATA";
@@ -70,6 +78,8 @@ const SET_PAGE = "SET_PAGE";
 const SET_PAGE_SIZE = "SET_PAGE_SIZE";
 const SET_SORT = "SET_SORT";
 const SET_FILTER = "SET_FILTER";
+const SELECT_ITEM = "SELECT_ITEM";
+const DESELECT_ITEM = "DESELECT_ITEM";
 type Action =
   | { type: "SET_DATA"; payload: { data: any[]; total: number } }
   | { type: "SET_LOADING" }
@@ -82,7 +92,9 @@ type Action =
   | {
       type: "SET_FILTER";
       payload: { field: string | undefined; value: string | undefined };
-    };
+    }
+  | { type: "SELECT_ITEM"; payload: { id: string; item: any } }
+  | { type: "DESELECT_ITEM"; payload: string };
 
 const reducer = (
   state: TakeHomeDataState,
@@ -90,19 +102,12 @@ const reducer = (
 ): TakeHomeDataState => {
   const { type } = action;
   let newState;
+  const newlySelected = Object.assign({}, state.selected);
   switch (type) {
     case SET_LOADING:
       newState = { ...state, isLoading: true };
       break;
     case SET_DATA:
-      console.log(
-        "setting total pages to",
-        action.payload.total,
-        "/",
-        state.pageSize,
-        "=",
-        action.payload.total / state.pageSize,
-      );
       newState = {
         ...state,
         data: action.payload.data,
@@ -138,6 +143,23 @@ const reducer = (
         ...state,
         filterField: action.payload.field,
         filterValue: action.payload.value,
+        selected: {},
+      };
+      break;
+    case SELECT_ITEM:
+      newState = {
+        ...state,
+        selected: {
+          ...state.selected,
+          [action.payload.id]: action.payload.item,
+        },
+      };
+      break;
+    case DESELECT_ITEM:
+      delete newlySelected[action.payload];
+      newState = {
+        ...state,
+        selected: newlySelected,
       };
       break;
     default:
@@ -148,8 +170,10 @@ const reducer = (
 };
 
 export const TakeHomeDataProvider = ({
+  resource,
   children,
 }: {
+  resource: Resource;
   children: React.ReactNode;
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -166,7 +190,7 @@ export const TakeHomeDataProvider = ({
       (async () => {
         dispatch({ type: SET_LOADING });
         await artificialDelay();
-        const response = await mockFetch("products", {
+        const response = await mockFetch(resource, {
           page,
           pageSize,
           sortField,
@@ -174,7 +198,6 @@ export const TakeHomeDataProvider = ({
           filterField,
           filterValue,
         });
-        console.log("response", response);
         const { data, total } = response;
         dispatch({ type: SET_DATA, payload: { data, total } });
       })();
@@ -242,6 +265,10 @@ export const TakeHomeDataProvider = ({
 
   const setFilter: SetFilter = useCallback(
     (field: string | undefined, value: string | undefined) => {
+      if (state.filterField === field && state.filterValue === value) {
+        // skip filter, it's already set for this field and value
+        return;
+      }
       dispatch({ type: SET_FILTER, payload: { field, value } });
       dispatch({ type: SET_PAGE, payload: 1 });
       load(
@@ -253,12 +280,36 @@ export const TakeHomeDataProvider = ({
         value,
       );
     },
-    [load, state.pageSize, state.sortAscending, state.sortField],
+    [
+      load,
+      state.filterField,
+      state.filterValue,
+      state.pageSize,
+      state.sortAscending,
+      state.sortField,
+    ],
   );
+
+  const selectItem: SelectItem = useCallback((id: string, item: any) => {
+    dispatch({ type: SELECT_ITEM, payload: { id, item } });
+  }, []);
+
+  const deselectItem: DeselectItem = useCallback((id: string) => {
+    dispatch({ type: DESELECT_ITEM, payload: id });
+  }, []);
 
   return (
     <TakeHomeDataContext.Provider
-      value={{ load, setPage, setPageSize, setSort, setFilter, state }}
+      value={{
+        load,
+        setPage,
+        setPageSize,
+        setSort,
+        setFilter,
+        selectItem,
+        deselectItem,
+        state,
+      }}
     >
       {children}
     </TakeHomeDataContext.Provider>

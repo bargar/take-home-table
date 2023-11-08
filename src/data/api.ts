@@ -1,5 +1,6 @@
 import products from "./products";
-type Resource = "products";
+export type Resource = "products";
+export type Identifiable = object & { id: string };
 type Options = {
   page: number;
   pageSize: number;

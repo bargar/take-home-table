@@ -46,9 +46,6 @@ export const TakeHomeTable = ({
   const [filterInput, setFilterInput] = useState("");
   const debouncedFilterInput = useDebounce(filterInput, 300);
 
-  // the number of columns is based on the table config provided and the always-present selection/checkbox column
-  const columnCountIncludingSelector = columns.length + 1;
-
   useEffect(() => {
     if (filterColumn) {
       // update the table filtering state and data based on debounced changes the user enters in the filter text input
@@ -57,7 +54,8 @@ export const TakeHomeTable = ({
   }, [debouncedFilterInput, filterColumn, filterColumn?.fieldName, setFilter]);
 
   return (
-    <>
+    <Container>
+      {state.isLoading && <Overlay>Loading...</Overlay>}
       {/* filtering */}
       {filterColumn && (
         <FilterInput
@@ -98,77 +96,66 @@ export const TakeHomeTable = ({
           </HeaderRow>
         </thead>
         <tbody>
-          {state.isLoading ? (
-            <tr>
-              {/* loading state */}
-              <td colSpan={columnCountIncludingSelector}>
-                <LoadingIndicator>Loading...</LoadingIndicator>
+          {state.data.map((row) => (
+            <tr key={JSON.stringify(row)}>
+              {/* item selection UI i.e. a checkbox at the beginning of each row */}
+              <td>
+                <input
+                  type="checkbox"
+                  onChange={(event) =>
+                    event.target.checked
+                      ? selectItem(idForItem(row), row)
+                      : deselectItem(idForItem(row))
+                  }
+                  checked={state.selected[idForItem(row)] || false}
+                />
               </td>
-            </tr>
-          ) : (
-            state.data.map((row) => (
-              <tr key={JSON.stringify(row)}>
-                {/* item selection UI i.e. a checkbox at the beginning of each row */}
-                <td>
-                  <input
-                    type="checkbox"
-                    onChange={(event) =>
-                      event.target.checked
-                        ? selectItem(idForItem(row), row)
-                        : deselectItem(idForItem(row))
-                    }
-                    checked={state.selected[idForItem(row)] || false}
-                  />
+              {/* one cell for each item field configured as a column, either raw value or special rendering */}
+              {columns.map(({ fieldName, Renderer }) => (
+                <td key={fieldName}>
+                  {Renderer ? (
+                    <Renderer value={row[fieldName]} item={row}>
+                      {row[fieldName]}
+                    </Renderer>
+                  ) : (
+                    row[fieldName]
+                  )}
                 </td>
-                {/* one cell for each item field configured as a column, either raw value or special rendering */}
-                {columns.map(({ fieldName, Renderer }) => (
-                  <td key={fieldName}>
-                    {Renderer ? (
-                      <Renderer value={row[fieldName]} item={row}>
-                        {row[fieldName]}
-                      </Renderer>
-                    ) : (
-                      row[fieldName]
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
+              ))}
+            </tr>
+          ))}
         </tbody>
       </Table>
-      {!state.isLoading && (
-        // pagination UI
-        <Footer>
-          <div>
-            Page Size
-            {PAGE_SIZES.map((pageSize) => (
-              <FooterButton
-                key={pageSize}
-                onClick={() => setPageSize(pageSize)}
-                disabled={state.pageSize === pageSize}
-              >
-                {pageSize}
-              </FooterButton>
-            ))}
-          </div>
-          <div>
+      // pagination UI
+      <Footer>
+        <div>
+          Page Size
+          {PAGE_SIZES.map((pageSize) => (
             <FooterButton
-              onClick={() => setPage(state.page - 1)}
-              disabled={state.page <= 1}
+              key={pageSize}
+              onClick={() => setPageSize(pageSize)}
+              disabled={state.pageSize === pageSize}
             >
-              ⬅️
+              {pageSize}
             </FooterButton>
-            Page {state.page} / {state.totalPages}
-            <FooterButton
-              onClick={() => setPage(state.page + 1)}
-              disabled={state.page >= state.totalPages}
-            >
-              ➡️
-            </FooterButton>
-          </div>
-        </Footer>
-      )}
+          ))}
+        </div>
+        <div>
+          <FooterButton
+            onClick={() => setPage(state.page - 1)}
+            disabled={state.page <= 1}
+          >
+            ⬅️
+          </FooterButton>
+          Page {state.page} / {state.totalPages}
+          <FooterButton
+            onClick={() => setPage(state.page + 1)}
+            disabled={state.page >= state.totalPages}
+          >
+            ➡️
+          </FooterButton>
+        </div>
+      </Footer>
       {state.selected && Object.keys(state.selected).length > 0 && (
         // selected items are displayed here
         <>
@@ -176,9 +163,30 @@ export const TakeHomeTable = ({
           <pre>{JSON.stringify(state.selected, null, " ")}</pre>
         </>
       )}
-    </>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  position: relative;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: black;
+  opacity: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -227,12 +235,4 @@ const Footer = styled.div`
 
 const FooterButton = styled.button`
   margin: 0 0.5em;
-`;
-
-const LoadingIndicator = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  height: 200px;
 `;

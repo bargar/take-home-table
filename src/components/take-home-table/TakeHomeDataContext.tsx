@@ -104,6 +104,8 @@ type Action =
 
 /**
  * Since the TakeHomeTable state is non-trivial,  we manage with a reducer.
+ *
+ * Note that async loading of new table data is invoked by helper functions, since async and useReducer do not mesh.
  */
 const reducer = (
   state: TakeHomeDataState,

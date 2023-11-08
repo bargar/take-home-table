@@ -67,8 +67,6 @@ const Products = () => (
 
 ## Installation
 
-
-
 ```bash
 git clone https://github.com/bargar/take-home-table.git
 cd take-home-table
@@ -77,6 +75,14 @@ yarn dev
 ```
 
 Point your browser at http://localhost:5173 or the alternative port Vite tells you it's running on. 
+
+## Future Steps
+
+* make components generically typed to avoid use of `any` type for items
+* add testing library tests - my choice to try out `swc` instead of `esbuild` made this a bit too bleeding edge to successfully configure
+* make styling more customizable
+* improve default styling
+* sync table state with URL query params
 
 # Stack
 

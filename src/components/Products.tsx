@@ -6,6 +6,7 @@ import PriceRenderer from "./take-home-table/field-renderers/PriceRenderer.tsx";
 import RatingRenderer from "./take-home-table/field-renderers/RatingRenderer.tsx";
 import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
 import TextRenderer from "./take-home-table/field-renderers/TextRenderer.tsx";
+import { TakeHomeDataProvider } from "./take-home-table/TakeHomeDataContext.tsx";
 
 const columns: TakeHomeTableColumn[] = [
   {
@@ -54,6 +55,10 @@ const columns: TakeHomeTableColumn[] = [
     Renderer: ThumbnailRenderer,
   },
 ];
-const Products = () => <TakeHomeTable columns={columns} />;
+const Products = () => (
+  <TakeHomeDataProvider resource="products">
+    <TakeHomeTable columns={columns} />
+  </TakeHomeDataProvider>
+);
 
 export default Products;

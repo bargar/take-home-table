@@ -4,6 +4,7 @@ import {
 } from "./take-home-table/TakeHomeTable.tsx";
 import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
 import AddressRenderer from "./take-home-table/field-renderers/AddressRenderer.tsx";
+import { TakeHomeDataProvider } from "./take-home-table/TakeHomeDataContext.tsx";
 const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "id",
@@ -42,6 +43,10 @@ const columns: TakeHomeTableColumn[] = [
   },
 ];
 
-const Users = () => <TakeHomeTable columns={columns} autoFocus={false} />;
+const Users = () => (
+  <TakeHomeDataProvider resource="users">
+    <TakeHomeTable columns={columns} autoFocus={false} />
+  </TakeHomeDataProvider>
+);
 
 export default Users;

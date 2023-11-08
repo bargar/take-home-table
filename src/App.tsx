@@ -2,7 +2,6 @@ import "./App.css";
 import styled from "styled-components";
 import Products from "./components/Products.tsx";
 import Users from "./components/Users.tsx";
-import { TakeHomeDataProvider } from "./components/take-home-table/TakeHomeDataContext.tsx";
 import { ReactNode } from "react";
 
 function App() {
@@ -12,15 +11,11 @@ function App() {
       <h1>take-home-table</h1>
 
       <Example title="Products">
-        <TakeHomeDataProvider resource="products">
-          <Products />
-        </TakeHomeDataProvider>
+        <Products />
       </Example>
 
       <Example title="Users">
-        <TakeHomeDataProvider resource="users">
-          <Users />
-        </TakeHomeDataProvider>
+        <Users />
       </Example>
     </>
   );

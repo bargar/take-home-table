@@ -16,9 +16,12 @@ export type TakeHomeTableColumn = {
 };
 
 type TakeHomeTableProps = {
+  // the heart of the table configuration, specifies what data will be included and how it will display and behave
   columns: TakeHomeTableColumn[];
   // override this for custom logic to determine the ID of an item
   idForItem?: (item: Identifiable) => string;
+  // optional, defaults to true so filtering field is autofocused
+  // provided to allow for better control when multiple instances rendered at a time
   autoFocus?: boolean;
 };
 
@@ -27,6 +30,7 @@ export const TakeHomeTable = ({
   idForItem = (item) => item.id,
   autoFocus = true,
 }: TakeHomeTableProps) => {
+  // helper methods for updating table state come from the surrounding context
   const {
     setPage,
     setPageSize,
@@ -37,17 +41,24 @@ export const TakeHomeTable = ({
     state,
   } = useContext(TakeHomeDataContext);
 
+  // filter column and state, if relevant
   const filterColumn = columns.find((column) => column.filterable);
   const [filterInput, setFilterInput] = useState("");
   const debouncedFilterInput = useDebounce(filterInput, 300);
+
+  // the number of columns is based on the table config provided and the always-present selection/checkbox column
   const columnCountIncludingSelector = columns.length + 1;
+
   useEffect(() => {
     if (filterColumn) {
+      // update the table filtering state and data based on debounced changes the user enters in the filter text input
       setFilter(filterColumn.fieldName, debouncedFilterInput);
     }
   }, [debouncedFilterInput, filterColumn, filterColumn?.fieldName, setFilter]);
+
   return (
     <>
+      {/* filtering */}
       {filterColumn && (
         <FilterInput
           placeholder={`Filter by ${filterColumn.label}`}
@@ -61,8 +72,10 @@ export const TakeHomeTable = ({
           autoFocus={autoFocus}
         />
       )}
+      {/* table */}
       <Table>
         <thead>
+          {/*header including column labels and sorting buttons */}
           <HeaderRow>
             <ColumnHeader>&nbsp;</ColumnHeader>
             {columns.map(({ fieldName, title, label, sortable }) => (
@@ -87,6 +100,7 @@ export const TakeHomeTable = ({
         <tbody>
           {state.isLoading ? (
             <tr>
+              {/* loading state */}
               <td colSpan={columnCountIncludingSelector}>
                 <LoadingIndicator>Loading...</LoadingIndicator>
               </td>
@@ -94,6 +108,7 @@ export const TakeHomeTable = ({
           ) : (
             state.data.map((row) => (
               <tr key={JSON.stringify(row)}>
+                {/* item selection UI i.e. a checkbox at the beginning of each row */}
                 <td>
                   <input
                     type="checkbox"
@@ -105,6 +120,7 @@ export const TakeHomeTable = ({
                     checked={state.selected[idForItem(row)] || false}
                   />
                 </td>
+                {/* one cell for each item field configured as a column, either raw value or special rendering */}
                 {columns.map(({ fieldName, Renderer }) => (
                   <td key={fieldName}>
                     {Renderer ? (
@@ -122,6 +138,7 @@ export const TakeHomeTable = ({
         </tbody>
       </Table>
       {!state.isLoading && (
+        // pagination UI
         <Footer>
           <div>
             Page Size
@@ -153,6 +170,7 @@ export const TakeHomeTable = ({
         </Footer>
       )}
       {state.selected && Object.keys(state.selected).length > 0 && (
+        // selected items are displayed here
         <>
           <h2>Selected</h2>
           <pre>{JSON.stringify(state.selected, null, " ")}</pre>

@@ -1,4 +1,4 @@
-import { TakeHomeRenderer } from "../TakeHomeTable.tsx";
+import { TakeHomeRenderer } from "../TakeHomeRenderer.ts";
 
 const RatingRenderer: TakeHomeRenderer = ({ value }) => {
   const maxStars = 5;

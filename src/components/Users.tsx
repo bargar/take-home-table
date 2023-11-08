@@ -1,8 +1,11 @@
-import { TakeHomeTable, TakeHomeTableColumn } from "./TakeHomeTable.tsx";
+import {
+  TakeHomeTable,
+  TakeHomeTableColumn,
+} from "./take-home-table/TakeHomeTable.tsx";
 import { useContext } from "react";
-import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
-import ThumbnailRenderer from "./field-renderers/ThumbnailRenderer.tsx";
-import AddressRenderer from "./field-renderers/AddressRenderer.tsx";
+import { TakeHomeDataContext } from "./take-home-table/TakeHomeDataContext.tsx";
+import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
+import AddressRenderer from "./take-home-table/field-renderers/AddressRenderer.tsx";
 const columns: TakeHomeTableColumn[] = [
   {
     fieldName: "id",

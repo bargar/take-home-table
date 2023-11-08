@@ -2,7 +2,7 @@ import "./App.css";
 import styled from "styled-components";
 import Products from "./components/Products.tsx";
 import Users from "./components/Users.tsx";
-import { TakeHomeDataProvider } from "./contexts/TakeHomeData.tsx";
+import { TakeHomeDataProvider } from "./components/take-home-table/TakeHomeDataContext.tsx";
 import { Resource } from "./data/api.ts";
 
 function App() {

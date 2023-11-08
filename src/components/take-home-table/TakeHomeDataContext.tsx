@@ -1,7 +1,26 @@
 import React, { createContext, useCallback, useReducer } from "react";
-import { artificialDelay } from "../util.ts";
-import { mockFetch, Resource } from "../data/api.ts";
+import { artificialDelay } from "../../util.ts";
+import { mockFetch, Resource } from "../../data/api.ts";
 
+const DEFAULT_PAGE_SIZE = 5;
+
+// all state for TakeHomeTable component is contained here
+export type TakeHomeDataState = {
+  isLoading: boolean;
+  data: any[];
+  total: number;
+  asOf: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  sortField: string | undefined;
+  sortAscending: boolean;
+  filterField: string | undefined;
+  filterValue: string | undefined;
+  selected: Record<string, any>;
+};
+
+// types for helper methods provided to TakeHomeTable component to update table state
 export type Load = (
   page?: number,
   pageSize?: number,
@@ -37,7 +56,7 @@ const initialState: TakeHomeDataState = {
   total: 0,
   asOf: Date.now(),
   page: 1,
-  pageSize: 5,
+  pageSize: DEFAULT_PAGE_SIZE,
   totalPages: 0,
   sortField: undefined,
   sortAscending: true,
@@ -57,20 +76,7 @@ export const TakeHomeDataContext = createContext<TakeHomeDataContextValue>({
   state: initialState,
 });
 
-export type TakeHomeDataState = {
-  isLoading: boolean;
-  data: any[];
-  total: number;
-  asOf: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  sortField: string | undefined;
-  sortAscending: boolean;
-  filterField: string | undefined;
-  filterValue: string | undefined;
-  selected: Record<string, any>;
-};
+// table state is managed via reducer
 
 const SET_DATA = "SET_DATA";
 const SET_LOADING = "SET_LOADING";
@@ -80,6 +86,7 @@ const SET_SORT = "SET_SORT";
 const SET_FILTER = "SET_FILTER";
 const SELECT_ITEM = "SELECT_ITEM";
 const DESELECT_ITEM = "DESELECT_ITEM";
+
 type Action =
   | { type: "SET_DATA"; payload: { data: any[]; total: number } }
   | { type: "SET_LOADING" }
@@ -96,6 +103,9 @@ type Action =
   | { type: "SELECT_ITEM"; payload: { id: string; item: any } }
   | { type: "DESELECT_ITEM"; payload: string };
 
+/**
+ * Since the TakeHomeTable state is non-trivial,  we manage with a reducer.
+ */
 const reducer = (
   state: TakeHomeDataState,
   action: Action,
@@ -112,6 +122,7 @@ const reducer = (
         ...state,
         data: action.payload.data,
         total: action.payload.total,
+        // calculate number of pages based on result set and page size
         totalPages: Math.ceil(action.payload.total / state.pageSize),
         asOf: Date.now(),
         isLoading: false,
@@ -126,7 +137,7 @@ const reducer = (
     case SET_PAGE_SIZE:
       newState = {
         ...state,
-        page: 1,
+        page: 1, // when page size is changed, return to page 1
         pageSize: action.payload,
         totalPages: Math.ceil(state.total / action.payload),
       };
@@ -151,11 +162,13 @@ const reducer = (
         ...state,
         selected: {
           ...state.selected,
+          // add item to map of selected items by id
           [action.payload.id]: action.payload.item,
         },
       };
       break;
     case DESELECT_ITEM:
+      // remove item from map of selected items by id
       delete newlySelected[action.payload];
       newState = {
         ...state,
@@ -169,6 +182,12 @@ const reducer = (
   return newState;
 };
 
+/**
+ * Provider componment that takes an api resource and exposes TakeHomeTable state and methods to update it.
+ * @param resource e.g. 'products', 'users'
+ * @param children the wrapped TakeHomeTable whose state will be managed by this context.
+ * @constructor
+ */
 export const TakeHomeDataProvider = ({
   resource,
   children,
@@ -178,10 +197,13 @@ export const TakeHomeDataProvider = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  /**
+   * Load new data for the table.
+   */
   const load: Load = useCallback(
     (
       page: number = 1,
-      pageSize: number = 5,
+      pageSize: number = DEFAULT_PAGE_SIZE,
       sortField: string | undefined = undefined,
       sortAscending: boolean = true,
       filterField: string | undefined = undefined,
@@ -202,6 +224,7 @@ export const TakeHomeDataProvider = ({
           const { data, total } = response;
           dispatch({ type: SET_DATA, payload: { data, total } });
         } catch (err) {
+          // on error, clear data
           dispatch({ type: SET_DATA, payload: { data: [], total: 0 } });
         }
       })();
@@ -209,6 +232,9 @@ export const TakeHomeDataProvider = ({
     [resource],
   );
 
+  /**
+   * Update the current page and reload data.
+   */
   const setPage: SetPage = useCallback(
     (page: number) => {
       dispatch({ type: SET_PAGE, payload: page });
@@ -231,6 +257,9 @@ export const TakeHomeDataProvider = ({
     ],
   );
 
+  /**
+   * Change the amount of items returned in one page and reload data.
+   */
   const setPageSize: SetPageSize = useCallback(
     (pageSize: number) => {
       dispatch({ type: SET_PAGE_SIZE, payload: pageSize });
@@ -252,6 +281,9 @@ export const TakeHomeDataProvider = ({
     ],
   );
 
+  /**
+   * Update the current sort field and or direction and reload.
+   */
   const setSort: SetSort = useCallback(
     (field: string | undefined, isAscending: boolean) => {
       dispatch({ type: SET_SORT, payload: { field, isAscending } });
@@ -267,6 +299,9 @@ export const TakeHomeDataProvider = ({
     [load, state.filterField, state.filterValue, state.page, state.pageSize],
   );
 
+  /**
+   * Update the filter field and or value and reload.
+   */
   const setFilter: SetFilter = useCallback(
     (field: string | undefined, value: string | undefined) => {
       if (state.filterField === field && state.filterValue === value) {
@@ -294,10 +329,16 @@ export const TakeHomeDataProvider = ({
     ],
   );
 
+  /**
+   * Add to the set of currently selected items.
+   */
   const selectItem: SelectItem = useCallback((id: string, item: any) => {
     dispatch({ type: SELECT_ITEM, payload: { id, item } });
   }, []);
 
+  /**
+   * Remove from the set of currently selected items.
+   */
   const deselectItem: DeselectItem = useCallback((id: string) => {
     dispatch({ type: DESELECT_ITEM, payload: id });
   }, []);

@@ -1,5 +1,5 @@
-import { TakeHomeRenderer } from "../TakeHomeTable.tsx";
 import styled from "styled-components";
+import { TakeHomeRenderer } from "../TakeHomeRenderer.ts";
 
 const ThumbnailRenderer: TakeHomeRenderer = ({ value, item }) => {
   return (

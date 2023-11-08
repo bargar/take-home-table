@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import styled from "styled-components";
 import {
@@ -15,15 +9,10 @@ import {
   SetPageSize,
   SetSort,
   TakeHomeDataState,
-} from "../contexts/TakeHomeData.tsx";
-import { PAGE_SIZES, Identifiable } from "../data/api.ts";
-
-type RendererProps = {
-  children: ReactNode;
-  value: string | number;
-  item: any;
-};
-export type TakeHomeRenderer = FunctionComponent<RendererProps>;
+} from "./TakeHomeDataContext.tsx";
+import { PAGE_SIZES, Identifiable } from "../../data/api.ts";
+import { TakeHomeRenderer } from "./TakeHomeRenderer.tsx";
+import { nextSortForField, setNextSort, sortIndicator } from "./sorting.ts";
 
 export type TakeHomeTableColumn = {
   fieldName: string;
@@ -45,54 +34,7 @@ type TakeHomeTableProps = {
   deselectItem: DeselectItem;
   // override this for custom logic to determine the ID of an item
   idForItem?: (item: Identifiable) => string;
-  autoFocus: boolean;
-};
-
-const setNextSort = (
-  fieldName: string,
-  state: TakeHomeDataState,
-  setSort: SetSort,
-) => {
-  if (state.sortField === fieldName) {
-    // already sorting by this field
-    if (state.sortAscending) {
-      setSort(fieldName, false);
-    } else {
-      // clear sorting
-      setSort(undefined, true);
-    }
-  } else {
-    // begin sorting by this field
-    setSort(fieldName, true);
-  }
-};
-
-const nextSortForField = (
-  fieldName: string,
-  label: string,
-  title: string | undefined,
-  state: TakeHomeDataState,
-) => {
-  const field = title || label || fieldName;
-  let sortProse;
-  if (state.sortField === fieldName) {
-    if (state.sortAscending) {
-      sortProse = `Sort by ${field} descending`;
-    } else {
-      sortProse = `Clear sorting`;
-    }
-  } else {
-    sortProse = `Sort by ${field} ascending`;
-  }
-  return sortProse;
-};
-
-const sortIndicator = (state: TakeHomeDataState, fieldName: string) => {
-  if (state.sortField === fieldName) {
-    return state.sortAscending ? "⬆️" : "⬇️";
-  } else {
-    return "";
-  }
+  autoFocus?: boolean;
 };
 
 export const TakeHomeTable = ({

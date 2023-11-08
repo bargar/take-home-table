@@ -1,5 +1,5 @@
-import { TakeHomeRenderer } from "../TakeHomeTable.tsx";
 import styled from "styled-components";
+import { TakeHomeRenderer } from "../TakeHomeRenderer.ts";
 
 const TextRenderer: TakeHomeRenderer = ({ value }) => {
   return <EllipsisCell title={value as string}>{value}</EllipsisCell>;

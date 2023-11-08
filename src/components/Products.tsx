@@ -1,10 +1,13 @@
-import { TakeHomeTable, TakeHomeTableColumn } from "./TakeHomeTable.tsx";
+import {
+  TakeHomeTable,
+  TakeHomeTableColumn,
+} from "./take-home-table/TakeHomeTable.tsx";
 import { useContext } from "react";
-import { TakeHomeDataContext } from "../contexts/TakeHomeData.tsx";
-import PriceRenderer from "./field-renderers/PriceRenderer.tsx";
-import RatingRenderer from "./field-renderers/RatingRenderer.tsx";
-import ThumbnailRenderer from "./field-renderers/ThumbnailRenderer.tsx";
-import TextRenderer from "./field-renderers/TextRenderer.tsx";
+import { TakeHomeDataContext } from "./take-home-table/TakeHomeDataContext.tsx";
+import PriceRenderer from "./take-home-table/field-renderers/PriceRenderer.tsx";
+import RatingRenderer from "./take-home-table/field-renderers/RatingRenderer.tsx";
+import ThumbnailRenderer from "./take-home-table/field-renderers/ThumbnailRenderer.tsx";
+import TextRenderer from "./take-home-table/field-renderers/TextRenderer.tsx";
 
 const columns: TakeHomeTableColumn[] = [
   {
